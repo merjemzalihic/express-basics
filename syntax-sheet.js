@@ -56,3 +56,28 @@ const readMyFile = async () => {
   app.use(express.urlencoded({ extended: true })); // Konvertuje query, route i body parametre iz string-a u objekte
   app.use(express.static(`${__dirname}/public`)); // Pravi folder koji se nalazi na putanju koju smo proslijedili kao parametar javnim, svak moze pristupati tom folderu onda.
 //#endregion
+
+//#region Imenovanje Route-a
+// Ako je kontroler namjenjen samo za user-e
+[HTTPGet] "/user/" // Za dohvatanje svih user-a
+[HTTPGet] "/user/:id" // Za dohvatanje user-a na osnovu id-a
+[HTTPPost] "/user/" // Za kreiranje novog user-a
+[HTTPPut ili HTTPPatch] "/user/" // Za update-ovanje user-a
+[HTTPDelete] "/user/:id" // Za brisanje user-a 
+//#endregion
+
+//#region Prisma
+  const {PrismaClient} = require("@prisma/client");
+
+  const prisma = new PrismaClient();
+
+  prisma.user.findMany() // Dohvata sve user-e iz baze
+
+  prisma.user.findFirst({ where: {id: 1 }}); // Dohvata jednog (prvog) user-a gdje je id jednak 1
+
+  prisma.user.create({ data: { firstName: "Adnan", lastName: "Zalihic", age: 27, email: "adnanzalihic@gmail.com", dateOfBirth: new Date() } }): // Kreira novog user-a
+
+  prisma.user.update({ data: { firstName: "Merjem" }, where: { id: 2 } }); // Update-a user-a ciji je id jednak 2. Samo ona polja koja proslijedimo u data atributu
+
+  prisma.user.delete({ where: { id: 2 }}) // Brise user-a ciji je id jednak 2
+//#endregion
