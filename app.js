@@ -1,19 +1,30 @@
 const express = require("express");
-const { PrismaClient } = require("@prisma/client");
+const { getAll, getById, create } = require("./controllers/userController");
 
 const app = express();
+
 app.use(express.urlencoded({ extended: true }));
-const prisma = new PrismaClient();
+app.use(express.json());
 
 app.get("/user/", async (req, res) => {
-  const data = await prisma.user.findMany();
+  const data = await getAll();
   res.send(data);
 });
 
 app.get("/user/:id", async (req, res) => {
   const userId = parseInt(req.params.id);
-  const user = await prisma.user.findFirst({ where: { id: userId }, select: { firstName: true, lastName: true } });
+  const user = await getById(userId);
   res.send(user);
+});
+
+app.post("/user/", async (req, res) => {
+  try {
+    const data = req.body;
+    const user = await create(data);
+    res.send(user);
+  } catch (error) {
+    res.status(500).send("User could not be created");
+  }
 });
 
 app.listen(8080, () => {
